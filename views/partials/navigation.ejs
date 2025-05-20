@@ -17,7 +17,9 @@
         alt="Cart"
         class="navigation__icon"
       />
-      <span class="navigation__badge"><%= cartCount %></span>
+      <% if (cartCount > 0) { %>
+        <span class="navigation__badge"><%= cartCount %></span>
+      <% } %>
     </li>
   </ul>
 </nav>
