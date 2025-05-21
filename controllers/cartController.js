@@ -12,7 +12,7 @@ exports.addProductToCart = async (request, response) => {
 
   await Cart.add(product);
 
-  response.status(STATUS_CODE.FOUND);
+  response.status(STATUS_CODE.OK).json({ success: true });
 };
 
 exports.getProductsCount = async () => {
