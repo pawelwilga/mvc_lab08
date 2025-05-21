@@ -11,28 +11,25 @@ class Cart {
     try {
       let cart = await db.collection(COLLECTION_NAME).findOne({});
 
-      // Jeśli koszyk nie istnieje, utwórz go
+      
       if (!cart) {
-        cart = { items: [] }; // Inicjalizuj lokalnie
-        await db.collection(COLLECTION_NAME).insertOne(cart); // Wstaw do bazy
+        cart = { items: [] };
+        await db.collection(COLLECTION_NAME).insertOne(cart);
         return cart;
       }
 
-      // Jeśli koszyk istnieje, ale nie ma pola 'items' lub jest ono null/undefined, zainicjalizuj je
       if (!cart.items) {
         cart.items = [];
-        // Opcjonalnie: zaktualizuj bazę danych, aby upewnić się, że to pole istnieje na stałe
         await db.collection(COLLECTION_NAME).updateOne({}, { $set: { items: [] } });
       }
 
       return cart;
     } catch (error) {
-      console.error("Error occurred while searching cart:", error); // Loguj cały błąd
+      console.error("Error occurred while searching cart:", error);
       return { items: [] };
     }
   }
 
-  // ... (reszta Twojego kodu, np. add, deleteProductByName, etc.)
   static async add(product) {
     const db = getDatabase();
 
@@ -47,7 +44,7 @@ class Cart {
         throw new Error("Product must have a non-negative 'price' property.");
       }
 
-      const cart = await this.getCart(); // Upewniamy się, że cart.items jest zawsze dostępne
+      const cart = await this.getCart();
       const searchedProduct = cart.items.find(
         (item) => item.product.name === product.name
       );
@@ -65,12 +62,10 @@ class Cart {
       console.log(`Product '${product.name}' added/updated in cart.`);
     } catch (error) {
       console.error("Error occurred while adding product to cart:", error.message);
-      // Możesz też rzucić błąd dalej, aby obsłużyć go na wyższym poziomie
-      // throw error;
     }
   }
 
-  // ... (pozostałe metody)
+  
 
   static async deleteProductByName(productName) {
     const db = getDatabase();
@@ -87,9 +82,9 @@ class Cart {
         await db
           .collection(COLLECTION_NAME)
           .updateOne({}, { $set: { items: cart.items } });
-        console.log(`Product '${productName}' removed from cart.`); // Dodany console.log
+        console.log(`Product '${productName}' removed from cart.`); 
       } else {
-        console.log(`Product '${productName}' not found in cart.`); // Dodany console.log
+        console.log(`Product '${productName}' not found in cart.`); 
       }
     } catch (error) {
       console.error(
@@ -104,7 +99,7 @@ class Cart {
       const cart = await this.getCart();
       return cart.items;
     } catch (error) {
-      console.error("Error occurred while searching for products in cart:", error); // Loguj cały błąd
+      console.error("Error occurred while searching for products in cart:", error); 
       return [];
     }
   }
@@ -118,7 +113,7 @@ class Cart {
       );
       return productsQuantity;
     } catch (error) {
-      console.error("Error occurred while getting quantity of items in cart:", error); // Loguj cały błąd
+      console.error("Error occurred while getting quantity of items in cart:", error); 
       return 0;
     }
   }
@@ -136,7 +131,7 @@ class Cart {
     } catch (error) {
       console.error(
         "Error occurred while calculating total price of items in cart:", error
-      ); // Loguj cały błąd
+      ); 
       return 0;
     }
   }
@@ -148,7 +143,7 @@ class Cart {
       await db
         .collection(COLLECTION_NAME)
         .updateOne({}, { $set: { items: [] } });
-      console.log("Cart cleared successfully."); // Dodany console.log
+      console.log("Cart cleared successfully."); 
     } catch (error) {
       console.error("Error occurred while clearing cart:", error);
     }
