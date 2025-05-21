@@ -1,5 +1,5 @@
 const { getDatabase } = require("../database");
-
+const Cart = require('./Cart');
 const COLLECTION_NAME = "products";
 
 class Product {
@@ -51,6 +51,8 @@ class Product {
 
   static async deleteByName(name) {
     const db = getDatabase();
+
+    Cart.deleteProductByName(name);
 
     try {
       await db.collection(COLLECTION_NAME).deleteOne({ name });

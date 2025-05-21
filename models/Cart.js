@@ -54,6 +54,30 @@ class Cart {
     }
   }
 
+  static async deleteProductByName(productName) {
+    const db = getDatabase();
+
+    try {
+      const cart = await this.getCart();
+      const initialItemCount = cart.items.length;
+
+      cart.items = cart.items.filter(
+        (item) => item.product.name !== productName
+      );
+
+      if (cart.items.length < initialItemCount) {
+        await db
+          .collection(COLLECTION_NAME)
+          .updateOne({}, { $set: { items: cart.items } });
+      }
+    } catch (error) {
+      console.error(
+        `Error occurred while deleting product '${productName}' from cart:`,
+        error
+      );
+    }
+  }
+
   static async getItems() {
     try {
       const cart = await this.getCart();
