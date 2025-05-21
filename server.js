@@ -6,6 +6,7 @@ const { PORT } = require("./config");
 const { mongoConnect } = require("./database");
 const logger = require("./utils/logger");
 const productsRoutes = require("./routing/products");
+const cartRoutes = require("./routing/cart");
 const logoutRoutes = require("./routing/logout");
 const killRoutes = require("./routing/kill");
 const homeRoutes = require("./routing/home");
@@ -20,6 +21,7 @@ app.set("views", "views");
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({ extended: false }));
 
 app.use((request, _response, next) => {
   const { url, method } = request;
@@ -29,6 +31,7 @@ app.use((request, _response, next) => {
 });
 
 app.use("/products", productsRoutes);
+app.use("/cart", cartRoutes);
 app.use("/logout", logoutRoutes);
 app.use("/kill", killRoutes);
 app.use(homeRoutes);

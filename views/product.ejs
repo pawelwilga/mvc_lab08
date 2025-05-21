@@ -2,17 +2,37 @@
 <html lang="pl">
   <head>
     <meta charset="UTF-8" />
-    <title><%= product.name %> - Szczegóły</title>
+    <title><%= product ? product.name + ' - Szczegóły' : 'Produkt nie znaleziony' %></title>
     <link rel="stylesheet" href="/css/main.css" />
   </head>
   <body>
     <main>
       <%- include('partials/navigation', { menuLinks: menuLinks, activeLinkPath:
       activeLinkPath, cartCount: cartCount }); %>
-      <h1 class="heading"><%= product.name %></h1>
-      <div><%= product.description %></div>
-      <button onclick="deleteProduct('<%= product.name %>')">Delete</button>
+
+      <% if (product) { %>
+      <h1 class="heading product__title"><%= product.name %></h1>
+      <div class="product__description"><%= product.description %></div>
+      <div class="product__price"><%= product.price %> PLN</div>
+
+      <button
+        onclick="addToCart('<%= product.name %>')"
+        class="product__button product__button__add"
+      >
+        Add to Cart
+      </button>
+      <button
+        onclick="deleteProduct('<%= product.name %>')"
+        class="product__button product__button__delete"
+      >
+        Delete
+      </button>
+      <% } else { %>
+      <h1 class="heading">Produkt nie znaleziony</h1>
+      <p>Przepraszamy, ale szukany produkt nie istnieje lub został usunięty.</p>
+      <% } %>
     </main>
+
     <script>
       function deleteProduct(name) {
         if (!confirm(`Are you sure you want to remove ${name}?`)) {
@@ -23,10 +43,34 @@
           method: "DELETE",
         }).then((response) => {
           if (response.ok) {
-            window.location.reload();
+            window.location.href = "/products"; // Przekieruj na listę produktów po usunięciu
           } else {
             alert("Error while removing product.");
           }
+        }).catch(error => {
+            console.error('Error:', error);
+            alert("An unexpected error occurred while trying to remove the product.");
+        });
+      }
+
+      function addToCart(productName) {
+        fetch('/cart/add', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ productName: productName }) // Wysłaj nazwę produktu
+        })
+        .then(response => {
+          if (response.ok) {
+            window.location.reload(); // Przeładowanie strony po sukcesie
+          } else {
+            alert('Error while adding product to cart.');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An unexpected error occurred while trying to add the product to cart.');
         });
       }
     </script>

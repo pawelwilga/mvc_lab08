@@ -4,9 +4,15 @@ const Cart = require("../models/Cart");
 const { STATUS_CODE } = require("../constants/statusCode");
 
 exports.addProductToCart = async (request, response) => {
-  await Cart.add(request.body.name);
+  console.log(`Dodawanie produktu do koszyka ${request.body.productName}`);
+  const product = await Product.findByName(request.body.productName);
 
-  response.status(STATUS_CODE.FOUND).redirect("/products/new");
+  if (product === undefined)
+    return response.status(STATUS_CODE.NOT_FOUND);
+
+  await Cart.add(product);
+
+  response.status(STATUS_CODE.FOUND);
 };
 
 exports.getProductsCount = async () => {
